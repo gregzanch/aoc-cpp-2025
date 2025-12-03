@@ -1,9 +1,10 @@
 #pragma once
 
+#include <ranges>
 #include "../solution.h"
-#include <algorithm>
+#include "../util.h"
 class Day01 : public Solution {
-public:
+ public:
   DayResult solve() override {
     // parse the lines
     const auto path = std::filesystem::path("src/day01/input.txt");
@@ -12,41 +13,53 @@ public:
       return std::unexpected(read_result.error());
     }
     input = std::move(read_result.value());
-
-    // split into lists
-    for (const auto &line : input) {
-      const auto first = line.substr(0, line.find_first_of(" "));
-      const auto second = line.substr(line.find_last_of(" "), line.size() - 1);
-      left_list.emplace_back(std::stoi(first));
-      right_list.emplace_back(std::stoi(second));
-    }
-
+    commands = parse_commands();
     return std::tuple(part1(), part2());
   }
 
-private:
-  PartResult part1() {
-    std::sort(left_list.begin(), left_list.end());
-    std::sort(right_list.begin(), right_list.end());
-    int sum = 0;
-    for (int i = 0; i < left_list.size(); i++) {
-      const auto difference = abs(left_list.at(i) - right_list.at(i));
-      sum += difference;
-    }
-    return std::to_string(sum);
-  }
-  PartResult part2() { 
-    int sum = 0;
-    const auto right_bag = bag(right_list);
-    for(const auto& item : left_list) {
-      if(right_bag.contains(item)) {
-        sum += item * right_bag.at(item);
-      }
-    }
-    return std::to_string(sum);
+ private:
+  enum Direction : char {
+    LEFT = 'L',
+    RIGHT = 'R',
+  };
+
+  struct Command {
+    Direction direction;
+    int amount;
+  };
+
+  static Command parse_command(const std::string& line) {
+    auto dir = line.substr(0, 1) == "L" ? Direction::LEFT : Direction::RIGHT;
+    auto amount = std::stoi(line.substr(1));
+    return Command{dir, amount};
   }
 
-  std::vector<int> left_list;
-  std::vector<int> right_list;
+  std::vector<Command> parse_commands() {
+    return input | std::views::transform(parse_command) | std::ranges::to<std::vector>();
+  }
+
+  PartResult part1() {
+    int pos = start_pos;
+    int zero_count = 0;
+    for(const auto& command : commands) {
+      switch (command.direction) {
+        case Direction::LEFT: {
+          pos = circular_mod(pos - command.amount, 100);
+        } break;
+        case Direction::RIGHT: {
+          pos = circular_mod(pos + command.amount, 100);
+        } break;
+        default: break;
+      }
+      if (pos == 0) {
+        zero_count++;
+      }
+    }
+    return std::to_string(zero_count);
+  }
+  PartResult part2() { return std::to_string(0); }
+
+  int start_pos = 50;
   std::vector<std::string> input;
+  std::vector<Command> commands;
 };

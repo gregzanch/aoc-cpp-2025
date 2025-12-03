@@ -15,6 +15,9 @@
 template <typename NumericType>
 concept Numeric = std::is_arithmetic<NumericType>::value;
 
+template <typename IntegralType>
+concept Integral = std::is_integral<IntegralType>::value;
+
 template <typename K>
 concept Iterable = std::ranges::range<K>;
 
@@ -154,4 +157,9 @@ std::vector<T> flatten(const std::vector<std::vector<T>>& iterable) {
 
 inline bool is_empty_string(const std::string& str) {
   return str == "";
+}
+
+template <Integral T>
+T circular_mod(T lhs, T rhs) {
+  return ((lhs % rhs) + rhs) % rhs;
 }
