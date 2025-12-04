@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <ranges>
 #include "../solution.h"
 #include "../util.h"
@@ -57,7 +58,28 @@ class Day01 : public Solution {
     }
     return std::to_string(zero_count);
   }
-  PartResult part2() { return std::to_string(0); }
+  PartResult part2() { 
+    int pos = start_pos;
+    int zero_count = 0;
+    for(const auto& command : commands) {
+      switch (command.direction) {
+        case Direction::LEFT: {
+          // flip to be positive
+          const auto flipped_pos = 100 - pos;
+          const auto rem = std::floor((flipped_pos + command.amount) / 100);
+          zero_count += pos == 0 ? 0 : rem;
+          pos = circular_mod(pos - command.amount, 100);
+        } break;
+        case Direction::RIGHT: {
+          const auto rem = std::floor((pos + command.amount) / 100);
+          zero_count += pos == 0 ? 0 : rem;
+          pos = circular_mod(pos + command.amount, 100);
+        } break;
+        default: break;
+      }
+    }
+    return std::to_string(zero_count);
+  }
 
   int start_pos = 50;
   std::vector<std::string> input;
