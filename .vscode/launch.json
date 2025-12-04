@@ -6,7 +6,7 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceFolder}/aoc-debug",
-      "args": ["1"],
+      "args": ["2"],
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "build-debug"
     }

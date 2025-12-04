@@ -67,12 +67,14 @@ class Day01 : public Solution {
           // flip to be positive
           const auto flipped_pos = 100 - pos;
           const auto rem = std::floor((flipped_pos + command.amount) / 100);
-          zero_count += pos == 0 ? 0 : rem;
+          zero_count += rem;
+          if(pos == 0 && rem > 0) zero_count--;
           pos = circular_mod(pos - command.amount, 100);
         } break;
         case Direction::RIGHT: {
           const auto rem = std::floor((pos + command.amount) / 100);
-          zero_count += pos == 0 ? 0 : rem;
+          zero_count += rem;
+          if(pos == 0 && rem > 0) zero_count--;
           pos = circular_mod(pos + command.amount, 100);
         } break;
         default: break;
