@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <print>
 #include "../solution.h"
@@ -49,7 +50,23 @@ class Day05 : public Solution {
     }
     return std::to_string(count);
   }
-  PartResult part2() { return std::to_string(0); }
+  PartResult part2() {
+    // we want to somehow merge the ranges
+    // i.e.
+    // ------
+    //    --------
+    //   ---
+    //               ---
+    // becomes
+    // -----------   ---
+
+
+    // probably sort by lower bound
+    std::sort(available_ids.begin(), available_ids.end(), [](auto a, auto b) {
+      return false;
+    });
+    return std::to_string(0);
+  }
   std::vector<std::tuple<uint64_t, uint64_t>> fresh_ranges;
   std::vector<uint64_t> available_ids;
 };
